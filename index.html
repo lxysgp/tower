@@ -38,6 +38,8 @@ let totalCoins = 0;
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
 let coinItems = [];
+let spikes = [];
+let enemies = [];
 let score = 0;
 let highest = 500;
 let gravity = 0.4;
@@ -80,18 +82,29 @@ function initGame() {
   player = { x: 200, y: 500, w: 30, h: 30, vy: -10 };
   platforms = [];
   coinItems = [];
+  spikes = [];
+  enemies = [];
   score = 0;
   highest = 500;
   coins = 0;
 
   for (let i = 0; i < 10; i++) {
-    let y = 600 - i * 60;
-    let x = Math.random() * 320;
-    platforms.push({ x, y, w: 80, h: 10 });
-    if (Math.random() < 0.4) {
-      coinItems.push({ x: x + 30, y: y - 20, r: 7 });
-    }
+    generatePlatform(600 - i * 60);
   }
+}
+
+function generatePlatform(y) {
+  let x = Math.random() * 320;
+  platforms.push({ x, y, w: 80, h: 10 });
+
+  if (Math.random() < 0.4)
+    coinItems.push({ x: x + 30, y: y - 20, r: 7 });
+
+  if (Math.random() < 0.3)
+    spikes.push({ x: x + 10, y: y - 10, w: 15, h: 15 });
+
+  if (Math.random() < 0.25)
+    enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
 }
 
 function gameLoop() {
@@ -113,6 +126,8 @@ function gameLoop() {
     highest -= dy;
     for (let p of platforms) p.y += dy;
     for (let c of coinItems) c.y += dy;
+    for (let s of spikes) s.y += dy;
+    for (let e of enemies) e.y += dy;
     score += dy;
   }
 
@@ -139,27 +154,46 @@ function gameLoop() {
     }
   }
 
-  // generate new platforms
-  while (platforms[platforms.length - 1].y > 0) {
-    let y = platforms[platforms.length - 1].y - 60;
-    let x = Math.random() * 320;
-    platforms.push({ x, y, w: 80, h: 10 });
-    if (Math.random() < 0.4) {
-      coinItems.push({ x: x + 30, y: y - 20, r: 7 });
+  // spike collisions
+  for (let s of spikes) {
+    if (player.x < s.x + s.w &&
+        player.x + player.w > s.x &&
+        player.y < s.y + s.h &&
+        player.y + player.h > s.y) {
+      showGameOver();
+      return;
     }
   }
 
-  // remove off-screen
-  platforms = platforms.filter(p => p.y < 600);
-  coinItems = coinItems.filter(c => c.y < 600);
+  // enemy movement and collisions
+  for (let e of enemies) {
+    e.x += e.dir * 2;
+    if (e.x < 0 || e.x + e.w > 400) e.dir *= -1;
 
-  // draw platforms
-  ctx.fillStyle = '#0f0';
-  for (let p of platforms) {
-    ctx.fillRect(p.x, p.y, p.w, p.h);
+    if (player.x < e.x + e.w &&
+        player.x + player.w > e.x &&
+        player.y < e.y + e.h &&
+        player.y + player.h > e.y) {
+      showGameOver();
+      return;
+    }
   }
 
-  // draw coins
+  // generate more
+  while (platforms[platforms.length - 1].y > 0)
+    generatePlatform(platforms[platforms.length - 1].y - 60);
+
+  // cleanup
+  platforms = platforms.filter(p => p.y < 600);
+  coinItems = coinItems.filter(c => c.y < 600);
+  spikes = spikes.filter(s => s.y < 600);
+  enemies = enemies.filter(e => e.y < 600);
+
+  // draw
+  ctx.fillStyle = '#0f0';
+  for (let p of platforms)
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+
   ctx.fillStyle = 'gold';
   for (let c of coinItems) {
     ctx.beginPath();
@@ -167,20 +201,26 @@ function gameLoop() {
     ctx.fill();
   }
 
-  // draw player
+  ctx.fillStyle = 'red';
+  for (let s of spikes)
+    ctx.fillRect(s.x, s.y, s.w, s.h);
+
+  ctx.fillStyle = 'purple';
+  for (let e of enemies)
+    ctx.fillRect(e.x, e.y, e.w, e.h);
+
   ctx.fillStyle = 'white';
   ctx.fillRect(player.x, player.y, player.w, player.h);
-
-  // game over
-  if (player.y > 600) {
-    showGameOver();
-    return;
-  }
 
   // score
   ctx.fillStyle = 'white';
   ctx.fillText('Score: ' + Math.floor(score), 10, 20);
   ctx.fillText('Coins: ' + coins, 10, 40);
+
+  if (player.y > 600) {
+    showGameOver();
+    return;
+  }
 
   requestAnimationFrame(gameLoop);
 }
