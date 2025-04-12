@@ -164,11 +164,16 @@ function initGame() {
   // First platform is long & safe
   platforms.push({ x: 0, y: 600 - 0 * 60, w: 400, h: 10 });
 
-  for (let i = 1; i < 10; i++) {
-    let y = 600 - i * 60;
-    let safe = i < 3; // First 3 platforms = safe zone
-    generatePlatform(y, safe);
-  }
+  // Always create long safe base platform at y = 600
+platforms.push({ x: 0, y: 600, w: 400, h: 10 });
+
+// Now generate the rest above that (i = 1 to 9)
+for (let i = 1; i < 10; i++) {
+  let y = 600 - i * 60;
+  let safe = i < 3; // First few above base are also safe
+  generatePlatform(y, safe);
+}
+
 }
 
 function generatePlatform(y, safe = false) {
