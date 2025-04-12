@@ -122,11 +122,13 @@ function goHome() {
   document.getElementById('ui').innerHTML = `
     <h1>Skibidi Jumper</h1>
     <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
+    <p>🏆 High Score: ${Math.floor(highScore)}</p>
     <button onclick="startGame()">Play</button>
     <button onclick="alert('Shop coming soon!')">Shop</button>
   `;
   document.getElementById('ui').style.display = 'flex';
 }
+
 
 function initGame() {
   player = { x: 200, y: 500, w: 30, h: 30, vy: -10 };
