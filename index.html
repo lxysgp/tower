@@ -289,11 +289,21 @@ for (let i = enemies.length - 1; i >= 0; i--) {
     ctx.fillRect(p.x, p.y, p.w, p.h);
 
   ctx.fillStyle = 'gold';
-  for (let c of coinItems) {
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
+ctx.font = 'bold 12px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+
+for (let c of coinItems) {
+  // Draw the coin
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw the dollar sign on top
+  ctx.fillStyle = 'black';
+  ctx.fillText('$', c.x, c.y);
+  ctx.fillStyle = 'gold'; // reset for next coin
+}
 
   ctx.fillStyle = 'red';
   for (let s of spikes) {
