@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skibidi Tower Escape</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    canvas { background: #111; display: block; margin: auto; border: 4px solid lime; }
+    body { background: black; color: lime; font-family: monospace; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Skibidi Tower Escape 🚽</h1>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const keys = {};
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    const player = {
+      x: 180, y: 500, w: 40, h: 40,
+      dy: 0, onGround: false
+    };
+
+    const gravity = 0.5;
+    const blocks = [];
+    const spikes = [];
+    const enemies = [];
+    let scrollY = 0;
+    let score = 0;
+
+    function createBlock(y) {
+      const x = Math.random() * 320;
+      blocks.push({ x, y, w: 80, h: 10 });
+
+      if (Math.random() < 0.3) {
+        spikes.push({ x: x + 30, y: y - 20, size: 20 });
+      }
+
+      if (Math.random() < 0.2) {
+        enemies.push({ x, y: y - 40, r: 20, dir: 1 });
+      }
+    }
+
+    for (let i = 0; i < 12; i++) createBlock(600 - i * 60);
+
+    function update() {
+      if (keys["ArrowLeft"]) player.x -= 5;
+      if (keys["ArrowRight"]) player.x += 5;
+
+      if (keys[" "] && player.onGround) {
+        player.dy = -10;
+        player.onGround = false;
+      }
+
+      player.dy += gravity;
+      player.y += player.dy;
+      player.onGround = false;
+
+      for (let b of blocks) {
+        if (
+          player.x < b.x + b.w &&
+          player.x + player.w > b.x &&
+          player.y + player.h < b.y + b.h &&
+          player.y + player.h + player.dy >= b.y
+        ) {
+          player.y = b.y - player.h;
+          player.dy = 0;
+          player.onGround = true;
+        }
+      }
+
+      if (player.y < 300) {
+        const diff = 300 - player.y;
+        player.y = 300;
+        for (let arr of [blocks, spikes, enemies]) {
+          for (let obj of arr) obj.y += diff;
+        }
+        scrollY += diff;
+        score = Math.floor(scrollY / 10);
+      }
+
+      while (blocks.length && blocks[0].y > 600) blocks.shift();
+      while (spikes.length && spikes[0].y > 600) spikes.shift();
+      while (enemies.length && enemies[0].y > 600) enemies.shift();
+
+      while (blocks.length < 12) createBlock(blocks[blocks.length - 1].y - 60);
+
+      for (let e of enemies) {
+        e.x += 2 * e.dir;
+        if (e.x < 0 || e.x + e.r * 2 > 400) e.dir *= -1;
+      }
+
+      for (let s of spikes) {
+        if (isColliding(player, { x: s.x, y: s.y, w: s.size, h: s.size })) gameOver();
+      }
+      for (let e of enemies) {
+        if (isColliding(player, { x: e.x, y: e.y, w: e.r * 2, h: e.r * 2 })) gameOver();
+      }
+
+      if (player.y > 600) gameOver();
+    }
+
+    function isColliding(a, b) {
+      return (
+        a.x < b.x + b.w &&
+        a.x + a.w > b.x &&
+        a.y < b.y + b.h &&
+        a.y + a.h > b.y
+      );
+    }
+
+    function gameOver() {
+      alert("💀 GAME OVER! Score: " + score);
+      location.reload();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, 400, 600);
+
+      // Player
+      ctx.fillStyle = "white";
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+
+      // Platforms
+      ctx.fillStyle = "lime";
+      for (let b of blocks)
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+
+      // Spikes (equilateral triangle)
+      ctx.fillStyle = "red";
+      for (let s of spikes) {
+        const { x, y, size } = s;
+        ctx.beginPath();
+        ctx.moveTo(x, y + size);
+        ctx.lineTo(x + size / 2, y);
+        ctx.lineTo(x + size, y + size);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Enemies (circle)
+      ctx.fillStyle = "purple";
+      for (let e of enemies) {
+        ctx.beginPath();
+        ctx.arc(e.x + e.r, e.y + e.r, e.r, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+
+      // Score
+      ctx.fillStyle = "yellow";
+      ctx.font = "20px monospace";
+      ctx.fillText("Score: " + score, 10, 30);
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>
