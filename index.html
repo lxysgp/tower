@@ -297,35 +297,44 @@ for (let i = enemies.length - 1; i >= 0; i--) {
 
   requestAnimationFrame(gameLoop);
 }
-  function launchConfetti() {
+function launchConfetti() {
   for (let i = 0; i < 100; i++) {
-    setTimeout(() => createConfetti(), Math.random() * 1000); // delay each confetti randomly
+    setTimeout(() => createConfetti(), Math.random() * 1000); // random delay
   }
 }
 
 function createConfetti() {
   const confetti = document.createElement('div');
+  const size = Math.random() * 6 + 4; // 4px to 10px
+  const left = Math.random() * window.innerWidth;
+  const color = ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'][Math.floor(Math.random() * 5)];
+  const duration = Math.random() * 1.5 + 1.5; // 1.5 to 3 seconds
+
   confetti.style.position = 'fixed';
-  confetti.style.width = '8px';
-  confetti.style.height = '8px';
-  confetti.style.backgroundColor = ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'][Math.floor(Math.random() * 5)];
-  confetti.style.left = Math.random() * window.innerWidth + 'px';
+  confetti.style.width = `${size}px`;
+  confetti.style.height = `${size}px`;
+  confetti.style.backgroundColor = color;
+  confetti.style.left = `${left}px`;
   confetti.style.top = '-10px';
   confetti.style.opacity = '1';
   confetti.style.zIndex = 9999;
-  confetti.style.transition = 'top 2s linear, opacity 2s';
+  confetti.style.borderRadius = '2px';
+  confetti.style.pointerEvents = 'none';
+  confetti.style.transition = `top ${duration}s ease-out, opacity ${duration}s ease-out`;
 
   document.body.appendChild(confetti);
 
-  setTimeout(() => {
+  // Start the animation after rendering
+  requestAnimationFrame(() => {
     confetti.style.top = window.innerHeight + 'px';
     confetti.style.opacity = '0';
-  }, 10);
+  });
 
   setTimeout(() => {
     confetti.remove();
-  }, 2100);
+  }, duration * 1000 + 200);
 }
+
 
 </script>
 
