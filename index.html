@@ -1,168 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Skibidi Tower Escape</title>
+  <title>Skibidi Jumper</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    canvas { background: #111; display: block; margin: auto; border: 4px solid lime; }
-    body { background: black; color: lime; font-family: monospace; text-align: center; }
+    body { margin: 0; overflow: hidden; font-family: sans-serif; }
+    canvas { background: #222; display: block; margin: auto; }
+    #ui {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background-color: rgba(0,0,0,0.7);
+      color: white; text-align: center;
+    }
+    button {
+      margin: 10px; padding: 10px 20px;
+      font-size: 18px; cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>Skibidi Tower Escape 🚽</h1>
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
 
-    const keys = {};
-    document.addEventListener("keydown", e => keys[e.key] = true);
-    document.addEventListener("keyup", e => keys[e.key] = false);
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<div id="ui">
+  <h1>Skibidi Jumper</h1>
+  <p>Total Coins: <span id="coinCount">0</span></p>
+  <button onclick="startGame()">Play</button>
+  <button onclick="alert('Shop coming soon!')">Shop</button>
+</div>
 
-    const player = {
-      x: 180, y: 500, w: 40, h: 40,
-      dy: 0, onGround: false
-    };
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let screen = 'home';
+let coins = 0;
+let totalCoins = 0;
 
-    const gravity = 0.5;
-    const blocks = [];
-    const spikes = [];
-    const enemies = [];
-    let scrollY = 0;
-    let score = 0;
+let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
+let platforms = [];
+let coinItems = [];
+let score = 0;
+let highest = 500;
+let gravity = 0.4;
+let keys = {};
 
-    function createBlock(y) {
-      const x = Math.random() * 320;
-      blocks.push({ x, y, w: 80, h: 10 });
+document.addEventListener('keydown', e => keys[e.key] = true);
+document.addEventListener('keyup', e => keys[e.key] = false);
 
-      if (Math.random() < 0.3) {
-        spikes.push({ x: x + 30, y: y - 20, size: 20 });
-      }
+function startGame() {
+  screen = 'game';
+  document.getElementById('ui').style.display = 'none';
+  initGame();
+  requestAnimationFrame(gameLoop);
+}
 
-      if (Math.random() < 0.2) {
-        enemies.push({ x, y: y - 40, r: 20, dir: 1 });
-      }
+function showGameOver() {
+  screen = 'gameOver';
+  document.getElementById('ui').innerHTML = `
+    <h1>Game Over</h1>
+    <p>Score: ${Math.floor(score)}</p>
+    <p>Coins this run: ${coins}</p>
+    <button onclick="startGame()">Play Again</button>
+    <button onclick="goHome()">Home</button>
+  `;
+  document.getElementById('ui').style.display = 'flex';
+}
+
+function goHome() {
+  screen = 'home';
+  document.getElementById('ui').innerHTML = `
+    <h1>Skibidi Jumper</h1>
+    <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
+    <button onclick="startGame()">Play</button>
+    <button onclick="alert('Shop coming soon!')">Shop</button>
+  `;
+  document.getElementById('ui').style.display = 'flex';
+}
+
+function initGame() {
+  player = { x: 200, y: 500, w: 30, h: 30, vy: -10 };
+  platforms = [];
+  coinItems = [];
+  score = 0;
+  highest = 500;
+  coins = 0;
+
+  for (let i = 0; i < 10; i++) {
+    let y = 600 - i * 60;
+    let x = Math.random() * 320;
+    platforms.push({ x, y, w: 80, h: 10 });
+    if (Math.random() < 0.4) {
+      coinItems.push({ x: x + 30, y: y - 20, r: 7 });
     }
+  }
+}
 
-    for (let i = 0; i < 12; i++) createBlock(600 - i * 60);
+function gameLoop() {
+  if (screen !== 'game') return;
+  ctx.clearRect(0, 0, 400, 600);
 
-    function update() {
-      if (keys["ArrowLeft"]) player.x -= 5;
-      if (keys["ArrowRight"]) player.x += 5;
+  player.vy += gravity;
+  player.y += player.vy;
 
-      if (keys[" "] && player.onGround) {
-        player.dy = -10;
-        player.onGround = false;
-      }
+  if (keys['ArrowLeft']) player.x -= 5;
+  if (keys['ArrowRight']) player.x += 5;
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.w > 400) player.x = 370;
 
-      player.dy += gravity;
-      player.y += player.dy;
-      player.onGround = false;
+  // scroll up
+  if (player.y < 300) {
+    let dy = 300 - player.y;
+    player.y = 300;
+    highest -= dy;
+    for (let p of platforms) p.y += dy;
+    for (let c of coinItems) c.y += dy;
+    score += dy;
+  }
 
-      for (let b of blocks) {
-        if (
-          player.x < b.x + b.w &&
-          player.x + player.w > b.x &&
-          player.y + player.h < b.y + b.h &&
-          player.y + player.h + player.dy >= b.y
-        ) {
-          player.y = b.y - player.h;
-          player.dy = 0;
-          player.onGround = true;
-        }
-      }
-
-      if (player.y < 300) {
-        const diff = 300 - player.y;
-        player.y = 300;
-        for (let arr of [blocks, spikes, enemies]) {
-          for (let obj of arr) obj.y += diff;
-        }
-        scrollY += diff;
-        score = Math.floor(scrollY / 10);
-      }
-
-      while (blocks.length && blocks[0].y > 600) blocks.shift();
-      while (spikes.length && spikes[0].y > 600) spikes.shift();
-      while (enemies.length && enemies[0].y > 600) enemies.shift();
-
-      while (blocks.length < 12) createBlock(blocks[blocks.length - 1].y - 60);
-
-      for (let e of enemies) {
-        e.x += 2 * e.dir;
-        if (e.x < 0 || e.x + e.r * 2 > 400) e.dir *= -1;
-      }
-
-      for (let s of spikes) {
-        if (isColliding(player, { x: s.x, y: s.y, w: s.size, h: s.size })) gameOver();
-      }
-      for (let e of enemies) {
-        if (isColliding(player, { x: e.x, y: e.y, w: e.r * 2, h: e.r * 2 })) gameOver();
-      }
-
-      if (player.y > 600) gameOver();
+  // platform collisions
+  for (let p of platforms) {
+    if (player.vy > 0 &&
+        player.x + player.w > p.x &&
+        player.x < p.x + p.w &&
+        player.y + player.h > p.y &&
+        player.y + player.h < p.y + 10) {
+      player.vy = -10;
     }
+  }
 
-    function isColliding(a, b) {
-      return (
-        a.x < b.x + b.w &&
-        a.x + a.w > b.x &&
-        a.y < b.y + b.h &&
-        a.y + a.h > b.y
-      );
+  // coin collisions
+  for (let i = coinItems.length - 1; i >= 0; i--) {
+    let c = coinItems[i];
+    let dx = player.x + player.w / 2 - (c.x);
+    let dy = player.y + player.h / 2 - (c.y);
+    if (Math.sqrt(dx*dx + dy*dy) < c.r + 15) {
+      coins++;
+      totalCoins++;
+      coinItems.splice(i, 1);
     }
+  }
 
-    function gameOver() {
-      alert("💀 GAME OVER! Score: " + score);
-      location.reload();
+  // generate new platforms
+  while (platforms[platforms.length - 1].y > 0) {
+    let y = platforms[platforms.length - 1].y - 60;
+    let x = Math.random() * 320;
+    platforms.push({ x, y, w: 80, h: 10 });
+    if (Math.random() < 0.4) {
+      coinItems.push({ x: x + 30, y: y - 20, r: 7 });
     }
+  }
 
-    function draw() {
-      ctx.clearRect(0, 0, 400, 600);
+  // remove off-screen
+  platforms = platforms.filter(p => p.y < 600);
+  coinItems = coinItems.filter(c => c.y < 600);
 
-      // Player
-      ctx.fillStyle = "white";
-      ctx.fillRect(player.x, player.y, player.w, player.h);
+  // draw platforms
+  ctx.fillStyle = '#0f0';
+  for (let p of platforms) {
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+  }
 
-      // Platforms
-      ctx.fillStyle = "lime";
-      for (let b of blocks)
-        ctx.fillRect(b.x, b.y, b.w, b.h);
+  // draw coins
+  ctx.fillStyle = 'gold';
+  for (let c of coinItems) {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
-      // Spikes (equilateral triangle)
-      ctx.fillStyle = "red";
-      for (let s of spikes) {
-        const { x, y, size } = s;
-        ctx.beginPath();
-        ctx.moveTo(x, y + size);
-        ctx.lineTo(x + size / 2, y);
-        ctx.lineTo(x + size, y + size);
-        ctx.closePath();
-        ctx.fill();
-      }
+  // draw player
+  ctx.fillStyle = 'white';
+  ctx.fillRect(player.x, player.y, player.w, player.h);
 
-      // Enemies (circle)
-      ctx.fillStyle = "purple";
-      for (let e of enemies) {
-        ctx.beginPath();
-        ctx.arc(e.x + e.r, e.y + e.r, e.r, 0, 2 * Math.PI);
-        ctx.fill();
-      }
+  // game over
+  if (player.y > 600) {
+    showGameOver();
+    return;
+  }
 
-      // Score
-      ctx.fillStyle = "yellow";
-      ctx.font = "20px monospace";
-      ctx.fillText("Score: " + score, 10, 30);
-    }
+  // score
+  ctx.fillStyle = 'white';
+  ctx.fillText('Score: ' + Math.floor(score), 10, 20);
+  ctx.fillText('Coins: ' + coins, 10, 40);
 
-    function loop() {
-      update();
-      draw();
-      requestAnimationFrame(loop);
-    }
+  requestAnimationFrame(gameLoop);
+}
+</script>
 
-    loop();
-  </script>
 </body>
 </html>
