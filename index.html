@@ -120,12 +120,16 @@ function showGameOver() {
 function goHome() {
   screen = 'home';
   document.getElementById('ui').innerHTML = `
-    <h1>Skibidi Jumper</h1>
-    <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
-    <p>🏆 High Score: ${Math.floor(highScore)}</p>
-    <button onclick="startGame()">Play</button>
-    <button onclick="alert('Shop coming soon!')">Shop</button>
-  `;
+  <h1>Skibidi Jumper</h1>
+  <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
+  <p style="color: gold; text-shadow: 0 0 8px gold;">🏆 High Score: ${Math.floor(highScore)}</p>
+  <button onclick="startGame()">Play</button>
+  <button onclick="alert('Shop coming soon!')">Shop</button>
+  <button onclick="resetHighScore()" style="background: #f00; color: white; box-shadow: 0 0 15px red;">
+    Reset Highscore
+  </button>
+`;
+
   document.getElementById('ui').style.display = 'flex';
 }
 
@@ -333,6 +337,11 @@ function createConfetti() {
   setTimeout(() => {
     confetti.remove();
   }, duration * 1000 + 200);
+}
+function resetHighScore() {
+  highScore = 0;
+  localStorage.removeItem('skibidiHigh');
+  goHome(); // refresh home screen UI
 }
 
 
