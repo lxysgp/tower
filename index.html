@@ -72,6 +72,8 @@ const ctx = canvas.getContext('2d');
 let screen = 'home';
 let coins = 0;
 let totalCoins = 0;
+let highScore = parseFloat(localStorage.getItem('skibidiHigh')) || 0;
+let isNewHigh = false;
 
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
@@ -94,15 +96,26 @@ function startGame() {
 
 function showGameOver() {
   screen = 'gameOver';
+  isNewHigh = score > highScore;
+  if (isNewHigh) {
+    highScore = score;
+    localStorage.setItem('skibidiHigh', highScore);
+  }
+
   document.getElementById('ui').innerHTML = `
     <h1>Game Over</h1>
     <p>Score: ${Math.floor(score)}</p>
+    ${isNewHigh ? '<h2 style="color: gold; text-shadow: 0 0 10px gold;">🏆 Highscore!</h2>' : ''}
     <p>Coins this run: ${coins}</p>
+    <p>High Score: ${Math.floor(highScore)}</p>
     <button onclick="startGame()">Play Again</button>
     <button onclick="goHome()">Home</button>
   `;
   document.getElementById('ui').style.display = 'flex';
+
+  if (isNewHigh) launchConfetti();
 }
+
 
 function goHome() {
   screen = 'home';
@@ -282,6 +295,36 @@ for (let i = enemies.length - 1; i >= 0; i--) {
 
   requestAnimationFrame(gameLoop);
 }
+  function launchConfetti() {
+  for (let i = 0; i < 100; i++) {
+    createConfetti();
+  }
+}
+
+function createConfetti() {
+  const confetti = document.createElement('div');
+  confetti.style.position = 'fixed';
+  confetti.style.width = '8px';
+  confetti.style.height = '8px';
+  confetti.style.backgroundColor = ['#ff0', '#f0f', '#0ff', '#0f0', '#f00'][Math.floor(Math.random() * 5)];
+  confetti.style.left = Math.random() * window.innerWidth + 'px';
+  confetti.style.top = '-10px';
+  confetti.style.opacity = '1';
+  confetti.style.zIndex = 9999;
+  confetti.style.transition = 'top 2s linear, opacity 2s';
+
+  document.body.appendChild(confetti);
+
+  setTimeout(() => {
+    confetti.style.top = window.innerHeight + 'px';
+    confetti.style.opacity = '0';
+  }, 10);
+
+  setTimeout(() => {
+    confetti.remove();
+  }, 2100);
+}
+
 </script>
 
 </body>
