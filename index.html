@@ -123,6 +123,10 @@ function showGameOver() {
     <button onclick="startGame()">Play Again</button>
     <button onclick="goHome()">Home</button>
   `;
+  bgMusic.pause();
+gameOverSound.currentTime = 0;
+gameOverSound.play();
+
   document.getElementById('ui').style.display = 'flex';
 
   if (isNewHigh) launchConfetti();
