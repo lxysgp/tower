@@ -71,6 +71,10 @@
 <audio id="gameOverSound">
   <source src="https://cdn.glitch.global/1ec3f9e1-72f4-44f2-b0b3-c7b1964e2d26/oof.mp3?v=1685993860465" type="audio/mpeg">
 </audio>
+<audio id="stompSound">
+  <source src="https://cdn.glitch.global/7a3b76a4-152e-40c1-8d44-850a14b3ec9a/stomp.mp3?v=1685996800555" type="audio/mpeg">
+</audio>
+
 
 <script>
 const canvas = document.getElementById('gameCanvas');
@@ -82,6 +86,7 @@ let highScore = parseFloat(localStorage.getItem('skibidiHigh')) || 0;
 let isNewHigh = false;
 const bgMusic = document.getElementById('bgMusic');
 const gameOverSound = document.getElementById('gameOverSound');
+const stompSound = document.getElementById('stompSound');
 
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
@@ -250,11 +255,14 @@ for (let i = enemies.length - 1; i >= 0; i--) {
     let enemyTop = e.y;
     
     if (player.vy > 0 && playerBottom - player.vy <= enemyTop + 5) {
-      // Stomp kill
-      enemies.splice(i, 1);
-      player.vy = -10; // bounce
-      continue;
-    } else {
+  // Stomp kill
+  stompSound.currentTime = 0;
+  stompSound.play();
+  enemies.splice(i, 1);
+  player.vy = -10; // bounce
+  continue;
+}
+ else {
       // Hit from side or below
       showGameOver();
       return;
