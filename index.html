@@ -166,18 +166,33 @@ function gameLoop() {
     }
   }
 
-  // Enemy movement + collision
-  for (let e of enemies) {
-    e.x += e.dir * 2;
-    if (e.x < 0 || e.x + e.w > 400) e.dir *= -1;
-    if (player.x < e.x + e.w &&
-        player.x + player.w > e.x &&
-        player.y < e.y + e.h &&
-        player.y + player.h > e.y) {
+for (let i = enemies.length - 1; i >= 0; i--) {
+  let e = enemies[i];
+  e.x += e.dir * 2;
+  if (e.x < 0 || e.x + e.w > 400) e.dir *= -1;
+
+  // Check collision
+  if (player.x < e.x + e.w &&
+      player.x + player.w > e.x &&
+      player.y < e.y + e.h &&
+      player.y + player.h > e.y) {
+    
+    let playerBottom = player.y + player.h;
+    let enemyTop = e.y;
+    
+    if (player.vy > 0 && playerBottom - player.vy <= enemyTop + 5) {
+      // Stomp kill
+      enemies.splice(i, 1);
+      player.vy = -10; // bounce
+      continue;
+    } else {
+      // Hit from side or below
       showGameOver();
       return;
     }
   }
+}
+
 
   // Generate more
   while (platforms[platforms.length - 1].y > 0) {
