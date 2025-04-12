@@ -87,6 +87,7 @@ let isNewHigh = false;
 const bgMusic = document.getElementById('bgMusic');
 const gameOverSound = document.getElementById('gameOverSound');
 const stompSound = document.getElementById('stompSound');
+stompSound.volume = 1.0; // MAX volume (1.0 is max, 0.0 is mute)
 
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
