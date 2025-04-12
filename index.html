@@ -322,8 +322,12 @@ for (let c of coinItems) {
   ctx.fillStyle = 'white';
   ctx.fillRect(player.x, player.y, player.w, player.h);
 
-  ctx.fillText('Score: ' + Math.floor(score), 10, 20);
-  ctx.fillText('Coins: ' + coins, 10, 40);
+  ctx.fillStyle = 'white';
+ctx.font = '16px Arial';
+ctx.textAlign = 'left';
+ctx.fillText('Score: ' + Math.floor(score), 20, 25);
+ctx.fillText('Coins: ' + coins, 20, 45);
+
 
   if (player.y > 600) {
     showGameOver();
