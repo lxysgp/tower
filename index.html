@@ -41,7 +41,6 @@ let coinItems = [];
 let spikes = [];
 let enemies = [];
 let score = 0;
-let highest = 500;
 let gravity = 0.4;
 let keys = {};
 
@@ -85,25 +84,29 @@ function initGame() {
   spikes = [];
   enemies = [];
   score = 0;
-  highest = 500;
   coins = 0;
 
-  for (let i = 0; i < 10; i++) {
-    generatePlatform(600 - i * 60);
+  // First platform is long & safe
+  platforms.push({ x: 0, y: 600 - 0 * 60, w: 400, h: 10 });
+
+  for (let i = 1; i < 10; i++) {
+    let y = 600 - i * 60;
+    let safe = i < 3; // First 3 platforms = safe zone
+    generatePlatform(y, safe);
   }
 }
 
-function generatePlatform(y) {
+function generatePlatform(y, safe = false) {
   let x = Math.random() * 320;
   platforms.push({ x, y, w: 80, h: 10 });
 
-  if (Math.random() < 0.4)
+  if (!safe && Math.random() < 0.4)
     coinItems.push({ x: x + 30, y: y - 20, r: 7 });
 
-  if (Math.random() < 0.3)
+  if (!safe && Math.random() < 0.15)
     spikes.push({ x: x + 10, y: y - 10, w: 15, h: 15 });
 
-  if (Math.random() < 0.25)
+  if (!safe && Math.random() < 0.25)
     enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
 }
 
@@ -119,19 +122,17 @@ function gameLoop() {
   if (player.x < 0) player.x = 0;
   if (player.x + player.w > 400) player.x = 370;
 
-  // scroll up
+  // Scroll up
   if (player.y < 300) {
     let dy = 300 - player.y;
     player.y = 300;
-    highest -= dy;
-    for (let p of platforms) p.y += dy;
-    for (let c of coinItems) c.y += dy;
-    for (let s of spikes) s.y += dy;
-    for (let e of enemies) e.y += dy;
+    for (let arr of [platforms, coinItems, spikes, enemies]) {
+      for (let item of arr) item.y += dy;
+    }
     score += dy;
   }
 
-  // platform collisions
+  // Platform collision
   for (let p of platforms) {
     if (player.vy > 0 &&
         player.x + player.w > p.x &&
@@ -142,11 +143,11 @@ function gameLoop() {
     }
   }
 
-  // coin collisions
+  // Coin collision
   for (let i = coinItems.length - 1; i >= 0; i--) {
     let c = coinItems[i];
-    let dx = player.x + player.w / 2 - (c.x);
-    let dy = player.y + player.h / 2 - (c.y);
+    let dx = player.x + player.w/2 - c.x;
+    let dy = player.y + player.h/2 - c.y;
     if (Math.sqrt(dx*dx + dy*dy) < c.r + 15) {
       coins++;
       totalCoins++;
@@ -154,7 +155,7 @@ function gameLoop() {
     }
   }
 
-  // spike collisions
+  // Spike collision
   for (let s of spikes) {
     if (player.x < s.x + s.w &&
         player.x + player.w > s.x &&
@@ -165,11 +166,10 @@ function gameLoop() {
     }
   }
 
-  // enemy movement and collisions
+  // Enemy movement + collision
   for (let e of enemies) {
     e.x += e.dir * 2;
     if (e.x < 0 || e.x + e.w > 400) e.dir *= -1;
-
     if (player.x < e.x + e.w &&
         player.x + player.w > e.x &&
         player.y < e.y + e.h &&
@@ -179,17 +179,18 @@ function gameLoop() {
     }
   }
 
-  // generate more
-  while (platforms[platforms.length - 1].y > 0)
+  // Generate more
+  while (platforms[platforms.length - 1].y > 0) {
     generatePlatform(platforms[platforms.length - 1].y - 60);
+  }
 
-  // cleanup
+  // Clean up
   platforms = platforms.filter(p => p.y < 600);
   coinItems = coinItems.filter(c => c.y < 600);
   spikes = spikes.filter(s => s.y < 600);
   enemies = enemies.filter(e => e.y < 600);
 
-  // draw
+  // Draw
   ctx.fillStyle = '#0f0';
   for (let p of platforms)
     ctx.fillRect(p.x, p.y, p.w, p.h);
@@ -202,15 +203,14 @@ function gameLoop() {
   }
 
   ctx.fillStyle = 'red';
-for (let s of spikes) {
-  ctx.beginPath();
-  ctx.moveTo(s.x, s.y + s.h);                   // bottom left
-  ctx.lineTo(s.x + s.w / 2, s.y);               // top
-  ctx.lineTo(s.x + s.w, s.y + s.h);             // bottom right
-  ctx.closePath();
-  ctx.fill();
-}
-
+  for (let s of spikes) {
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y + s.h);
+    ctx.lineTo(s.x + s.w / 2, s.y);
+    ctx.lineTo(s.x + s.w, s.y + s.h);
+    ctx.closePath();
+    ctx.fill();
+  }
 
   ctx.fillStyle = 'purple';
   for (let e of enemies)
@@ -219,8 +219,6 @@ for (let s of spikes) {
   ctx.fillStyle = 'white';
   ctx.fillRect(player.x, player.y, player.w, player.h);
 
-  // score
-  ctx.fillStyle = 'white';
   ctx.fillText('Score: ' + Math.floor(score), 10, 20);
   ctx.fillText('Coins: ' + coins, 10, 40);
 
