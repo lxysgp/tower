@@ -80,6 +80,8 @@ let coins = 0;
 let totalCoins = 0;
 let highScore = parseFloat(localStorage.getItem('skibidiHigh')) || 0;
 let isNewHigh = false;
+const bgMusic = document.getElementById('bgMusic');
+const gameOverSound = document.getElementById('gameOverSound');
 
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
