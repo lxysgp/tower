@@ -283,51 +283,44 @@ for (let i = enemies.length - 1; i >= 0; i--) {
   spikes = spikes.filter(s => s.y < 600);
   enemies = enemies.filter(e => e.y < 600);
 
-  // Draw
-  ctx.fillStyle = '#0f0';
-  for (let p of platforms)
-    ctx.fillRect(p.x, p.y, p.w, p.h);
-
-  ctx.fillStyle = 'gold';
+  // Draw coins (under everything)
+ctx.fillStyle = 'gold';
 ctx.font = 'bold 12px Arial';
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
-
 for (let c of coinItems) {
-  // Draw the coin
   ctx.beginPath();
   ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
   ctx.fill();
-
-  // Draw the dollar sign on top
   ctx.fillStyle = 'black';
   ctx.fillText('$', c.x, c.y);
-  ctx.fillStyle = 'gold'; // reset for next coin
+  ctx.fillStyle = 'gold';
 }
 
-  ctx.fillStyle = 'red';
-  for (let s of spikes) {
-    ctx.beginPath();
-    ctx.moveTo(s.x, s.y + s.h);
-    ctx.lineTo(s.x + s.w / 2, s.y);
-    ctx.lineTo(s.x + s.w, s.y + s.h);
-    ctx.closePath();
-    ctx.fill();
-  }
+// Draw spikes (below platforms)
+ctx.fillStyle = 'red';
+for (let s of spikes) {
+  ctx.beginPath();
+  ctx.moveTo(s.x, s.y + s.h);
+  ctx.lineTo(s.x + s.w / 2, s.y);
+  ctx.lineTo(s.x + s.w, s.y + s.h);
+  ctx.closePath();
+  ctx.fill();
+}
 
-  ctx.fillStyle = 'purple';
-  for (let e of enemies)
-    ctx.fillRect(e.x, e.y, e.w, e.h);
+// NOW draw platforms over spikes
+ctx.fillStyle = '#0f0';
+for (let p of platforms)
+  ctx.fillRect(p.x, p.y, p.w, p.h);
 
-  ctx.fillStyle = 'white';
-  ctx.fillRect(player.x, player.y, player.w, player.h);
+// Draw enemies
+ctx.fillStyle = 'purple';
+for (let e of enemies)
+  ctx.fillRect(e.x, e.y, e.w, e.h);
 
-  ctx.fillStyle = 'white';
-ctx.font = '16px Arial';
-ctx.textAlign = 'left';
-ctx.fillText('Score: ' + Math.floor(score), 20, 25);
-ctx.fillText('Coins: ' + coins, 20, 45);
-
+// Draw player
+ctx.fillStyle = 'white';
+ctx.fillRect(player.x, player.y, player.w, player.h);
 
   if (player.y > 600) {
     showGameOver();
