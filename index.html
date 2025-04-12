@@ -202,8 +202,15 @@ function gameLoop() {
   }
 
   ctx.fillStyle = 'red';
-  for (let s of spikes)
-    ctx.fillRect(s.x, s.y, s.w, s.h);
+for (let s of spikes) {
+  ctx.beginPath();
+  ctx.moveTo(s.x, s.y + s.h);                   // bottom left
+  ctx.lineTo(s.x + s.w / 2, s.y);               // top
+  ctx.lineTo(s.x + s.w, s.y + s.h);             // bottom right
+  ctx.closePath();
+  ctx.fill();
+}
+
 
   ctx.fillStyle = 'purple';
   for (let e of enemies)
