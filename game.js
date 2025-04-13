@@ -336,13 +336,13 @@ if (xp >= xpToNext) {
   lastLevelReward++;
   totalCoins += lastLevelReward;
 
-  // Save progress
   localStorage.setItem('level', level);
   localStorage.setItem('xp', xp);
   localStorage.setItem('lastLevelReward', lastLevelReward);
 
-  alert(`🎉 You leveled up to Level ${level}! +${lastLevelReward} coins`);
+  showLevelUp(level, lastLevelReward);
 }
+
 
 
   requestAnimationFrame(gameLoop);
@@ -408,6 +408,16 @@ function startGame() {
     localStorage.setItem("seenTutorial", "true");
   }
 }
+function showLevelUp(newLvl, rewardCoins) {
+  document.getElementById('newLevel').textContent = `Level ${newLvl}`;
+  document.getElementById('levelCoins').textContent = `+${rewardCoins}`;
+  document.getElementById('levelUpPopup').style.display = 'flex';
+}
+
+function closeLevelUp() {
+  document.getElementById('levelUpPopup').style.display = 'none';
+}
+
 function openShop() {
   document.getElementById('ui').style.display = 'none';
   document.getElementById('gameCanvas').style.display = 'none'; // 🔥 Hide canvas
