@@ -51,6 +51,29 @@ function startGame() {
   }
 }
 
+function deleteProgress() {
+  if (!confirm("⚠️ Are you sure you want to delete ALL your progress?")) return;
+
+  localStorage.removeItem('xp');
+  localStorage.removeItem('level');
+  localStorage.removeItem('lastLevelReward');
+  localStorage.removeItem('skibidiHigh');
+  localStorage.removeItem('ownedColors');
+  localStorage.removeItem('playerColor');
+  localStorage.removeItem('skibidiUpgrades');
+
+  xp = 0;
+  level = 1;
+  xpToNext = 100;
+  lastLevelReward = 0;
+  totalCoins = 0;
+  ownedColors = ['default'];
+  playerColor = 'default';
+  upgrades = {};
+
+  alert("🗑️ Progress wiped! Back to Level 1.");
+  goHome(); // Refresh UI
+}
 
 function showGameOver() {
   screen = 'gameOver';
