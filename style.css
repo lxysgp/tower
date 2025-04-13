@@ -136,3 +136,35 @@ body {
   box-shadow: 0 0 12px #0ff;
   cursor: pointer;
 }
+#deleteConfirm {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#deleteBox {
+  background: black;
+  border: 3px solid red;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 20px red;
+}
+
+#deleteBox button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px red;
+}
