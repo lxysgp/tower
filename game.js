@@ -376,4 +376,3 @@ function equipColor(color) {
 }
 window.equipColor = equipColor;
 
- 
