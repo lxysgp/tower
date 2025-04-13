@@ -328,9 +328,11 @@ function startGame() {
 }
 function openShop() {
   document.getElementById('ui').style.display = 'none';
+  document.getElementById('gameCanvas').style.display = 'none'; // 🔥 Hide canvas
   document.getElementById('shop').style.display = 'flex';
   document.getElementById('shopCoinCount').innerText = totalCoins;
 }
+
 window.openShop = openShop;
 function buyUpgrade(name, cost) {
   if (upgrades[name]) {
