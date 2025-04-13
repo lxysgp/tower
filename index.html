@@ -28,25 +28,36 @@
 </div>
 <div id="shop" style="display: none;">
   <h2>🛒 Skibidi Shop</h2>
-  <p>Coins: <span id="shopCoinCount">0</span></p>
+  <p>Coins: <span id="shopCoinCount">0</span> 🚀</p>
 
-  <h3>🚀 Upgrades</h3>
-  <button onclick="buyUpgrade('magnet', 75)">🧲 Coin Magnet (75🟡)</button>
-  <button onclick="buyUpgrade('doubleJump', 100)">🦘 Double Jump (100🟡)</button>
-  <button onclick="buyUpgrade('bounceBoost', 60)">🌀 Bounce Boost (60🟡)</button>
+  <h3>🚀 Upgrades:</h3>
+  <ul>
+    <li><button onclick="buyUpgrade('magnet', 75)">🧲 Coin Magnet (75🟡)</button></li>
+    <li><button onclick="buyUpgrade('doubleJump', 100)">🦘 Double Jump (100🟡)</button></li>
+    <li><button onclick="buyUpgrade('bounceBoost', 60)">🌀 Bounce Boost (60🟡)</button></li>
+  </ul>
 
-  <h3>🎨 Skins</h3>
-  <button onclick="buyColor('red', 50)">🟥 Red (50🟡)</button>
-  <button onclick="buyColor('blue', 50)">🟦 Blue (50🟡)</button>
-  <button onclick="buyColor('green', 50)">🟩 Green (50🟡)</button>
-  <button onclick="buyColor('gold', 100)">🟨 Gold (100🟡)</button>
+  <h3>🎨 Skins:</h3>
+  <ul>
+    <li><button onclick="buyColor('red', 50)">🟥 Red (50🟡)</button></li>
+    <li><button onclick="buyColor('blue', 50)">🟦 Blue (50🟡)</button></li>
+    <li><button onclick="buyColor('green', 50)">🟩 Green (50🟡)</button></li>
+    <li><button onclick="buyColor('gold', 100)">🟨 Gold (100🟡)</button></li>
+  </ul>
 
+  <h3>🎮 Equip Skin:</h3>
+  <ul>
+    <li><button onclick="equipColor('default')">⬜ Default</button></li>
+    <li><button onclick="equipColor('red')">🟥 Red</button></li>
+    <li><button onclick="equipColor('blue')">🟦 Blue</button></li>
+    <li><button onclick="equipColor('green')">🟩 Green</button></li>
+    <li><button onclick="equipColor('gold')">🟨 Gold</button></li>
+  </ul>
 
-
-
-  <br><br>
+  <br>
   <button onclick="goHome()">Back</button>
 </div>
+
 
 <audio id="bgMusic" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
