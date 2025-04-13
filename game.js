@@ -50,10 +50,11 @@ function startGame() {
     localStorage.setItem("seenTutorial", "true");
   }
 }
-
 function deleteProgress() {
-  if (!confirm("⚠️ Are you sure you want to delete ALL your progress?")) return;
+  document.getElementById('deleteConfirm').style.display = 'flex';
+}
 
+function confirmDelete() {
   localStorage.removeItem('xp');
   localStorage.removeItem('level');
   localStorage.removeItem('lastLevelReward');
@@ -71,9 +72,14 @@ function deleteProgress() {
   playerColor = 'default';
   upgrades = {};
 
-  alert("🗑️ Progress wiped! Back to Level 1.");
-  goHome(); // Refresh UI
+  document.getElementById('deleteConfirm').style.display = 'none';
+  goHome();
 }
+
+function cancelDelete() {
+  document.getElementById('deleteConfirm').style.display = 'none';
+}
+
 
 function showGameOver() {
   screen = 'gameOver';
