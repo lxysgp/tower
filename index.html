@@ -10,9 +10,16 @@
 <div id="ui">
   <h1>Skibidi Jumper</h1>
   <p>Total Coins: <span id="coinCount">0</span></p>
+  <p style="color: gold; text-shadow: 0 0 8px gold;">🏆 High Score: <span id="highScoreDisplay">0</span></p>
+  <div id="xpBarHome"></div>
+
   <button onclick="startGame()">Play</button>
   <button onclick="openShop()">Shop</button>
+  <button onclick="resetHighScore()" style="background: #f00; color: white; box-shadow: 0 0 15px red;">
+    Reset Highscore
+  </button>
 </div>
+
 
 <div id="tutorial">
   <div class="tutorial-header">
