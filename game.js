@@ -324,9 +324,12 @@ xp += 2 + Math.floor(Math.random() * 2); // 2–3 XP
   spikes = spikes.filter(s => s.y < 600);
   enemies = enemies.filter(e => e.y < 600);
 //jetpack
-  ctx.fillStyle = 'orange';
-for (let j of jetpacks)
-  ctx.fillRect(j.x, j.y, j.w, j.h);
+ctx.fillStyle = 'orange';
+ctx.font = '16px Arial';
+for (let j of jetpacks) {
+  ctx.fillText("🔥", j.x, j.y);
+}
+
 
   // Draw coins (under everything)
 ctx.fillStyle = 'gold';
