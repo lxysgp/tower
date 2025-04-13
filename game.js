@@ -361,7 +361,7 @@ ctx.fillText(`XP: ${xp}/${xpToNext}`, 10, 75);
     return;
   }
   if (!player.reached1500 && score >= 1500) {
-  xp += 20;
+  xp += 25;
   player.reached1500 = true;
 }
 
