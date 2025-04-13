@@ -228,14 +228,26 @@ function gameLoop() {
 
   // Spike collision
   for (let s of spikes) {
-    if (player.x < s.x + s.w &&
-        player.x + player.w > s.x &&
-        player.y < s.y + s.h &&
-        player.y + player.h > s.y) {
-      showGameOver();
-      return;
-    }
+  const spikeTop = s.y;
+  const playerBottom = player.y + player.h;
+
+  const horizontalOverlap =
+    player.x < s.x + s.w &&
+    player.x + player.w > s.x;
+
+  const verticalOverlap =
+    playerBottom > spikeTop &&
+    player.y < s.y + s.h;
+
+  const isComingFromAbove =
+    player.vy > 0 && playerBottom - player.vy <= spikeTop + 2;
+
+  if (horizontalOverlap && verticalOverlap && isComingFromAbove) {
+    showGameOver();
+    return;
   }
+}
+
 
 for (let i = enemies.length - 1; i >= 0; i--) {
   let e = enemies[i];
