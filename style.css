@@ -86,9 +86,9 @@ body {
   padding: 12px;
   margin: 6px;
   border-radius: 10px;
-  background: #1f2af2;
+  background: MediumSlateBlue;
   color: white;
-  box-shadow: 0 0 10px #1f2af2;
+  box-shadow: 0 0 10px MediumSlateBlue;
 }
 
 #shop {
