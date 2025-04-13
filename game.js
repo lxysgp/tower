@@ -62,18 +62,27 @@ function showGameOver() {
 
 function goHome() {
   screen = 'home';
-  document.getElementById('shop').style.display = 'none'; // hide shop
-  document.getElementById('gameCanvas').style.display = 'block'; // 🔥 Show canvas
+
+  // 🔥 Hide the shop if it’s visible
+  document.getElementById('shop').style.display = 'none';
+
+  // 🔥 Show canvas again if you hid it in shop
+  document.getElementById('gameCanvas').style.display = 'block';
+
   document.getElementById('ui').innerHTML = `
     <h1>Skibidi Jumper</h1>
     <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
     <p style="color: gold; text-shadow: 0 0 8px gold;">🏆 High Score: ${Math.floor(highScore)}</p>
     <button onclick="startGame()">Play</button>
     <button onclick="openShop()">Shop</button>
-    <button onclick="resetHighScore()" style="background: #f00; color: white; box-shadow: 0 0 15px red;">Reset Highscore</button>
+    <button onclick="resetHighScore()" style="background: #f00; color: white; box-shadow: 0 0 15px red;">
+      Reset Highscore
+    </button>
   `;
+
   document.getElementById('ui').style.display = 'flex';
 }
+
 
 
 
