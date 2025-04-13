@@ -161,17 +161,21 @@ function initGame() {
   score = 0;
   coins = 0;
 
-  // First platform is long & safe
-  platforms.push({ x: 0, y: 600 - 0 * 60, w: 400, h: 10 });
+  // Always create long safe base platform at y = 600
+  platforms.push({ x: 0, y: 600, w: 400, h: 10 });
 
+  // Now generate other platforms ABOVE it
   for (let i = 1; i < 10; i++) {
     let y = 600 - i * 60;
-    let safe = i < 3; // First 3 platforms = safe zone
+    let safe = i < 4; // First 3 above base are totally safe (no spikes/enemies)
     generatePlatform(y, safe);
   }
 }
 
+
 function generatePlatform(y, safe = false) {
+  if (y === 600) return; // just in case — skip accidental overwrite of base
+
   let x = Math.random() * 320;
   platforms.push({ x, y, w: 80, h: 10 });
 
