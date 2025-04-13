@@ -296,3 +296,23 @@ function resetHighScore() {
   localStorage.removeItem('skibidiHigh');
   goHome(); // refresh home screen UI
 }
+function hideTutorial() {
+  document.getElementById('tutorial').style.display = 'none';
+}
+
+function startGame() {
+  screen = 'game';
+  document.getElementById('ui').style.display = 'none';
+  initGame();
+  requestAnimationFrame(gameLoop);
+  bgMusic.currentTime = 0;
+  bgMusic.volume = 0.5;
+  bgMusic.play();
+
+  // 👇 Show tutorial only once per player
+  if (!localStorage.getItem("seenTutorial")) {
+    document.getElementById('tutorial').style.display = 'block';
+    localStorage.setItem("seenTutorial", "true");
+  }
+}
+
