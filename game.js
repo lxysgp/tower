@@ -151,8 +151,8 @@ function initGame() {
   // Always create long safe base platform at y = 600
   platforms.push({ x: 0, y: 600, w: 400, h: 10 });
 player = { x: 200, y: 500, w: 30, h: 30, vy: -10 };
-player.reached500 = false;
-player.reached1000 = false;
+player.reached1500 = false;
+player.reached2500 = false;
 
   // Now generate other platforms ABOVE it
   for (let i = 1; i < 10; i++) {
@@ -172,10 +172,10 @@ function generatePlatform(y, safe = false) {
   if (!safe && Math.random() < 0.4)
     coinItems.push({ x: x + 30, y: y - 20, r: 7 });
 
-  if (!safe && Math.random() < 0.15)
+  if (!safe && Math.random() < 0.09) //spike
     spikes.push({ x: x + 10, y: y - 10, w: 15, h: 15 });
 
-  if (!safe && Math.random() < 0.25)
+  if (!safe && Math.random() < 0.07) //enemies
     enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
 }
 
@@ -348,14 +348,14 @@ ctx.fillText(`XP: ${xp}/${xpToNext}`, 10, 75);
     showGameOver();
     return;
   }
-  if (!player.reached500 && score >= 500) {
+  if (!player.reached1500 && score >= 1500) {
   xp += 20;
-  player.reached500 = true;
+  player.reached1500 = true;
 }
 
-if (!player.reached1000 && score >= 1000) {
+if (!player.reached2500 && score >= 2500) {
   xp += 50;
-  player.reached1000 = true;
+  player.reached2500 = true;
 }
 if (xp >= xpToNext) {
   xp -= xpToNext;
