@@ -13,7 +13,9 @@ stompSound.volume = 1.0; // MAX volume (1.0 is max, 0.0 is mute)
 let ownedColors = JSON.parse(localStorage.getItem('ownedColors')) || ['default'];
 let playerColor = localStorage.getItem('playerColor') || 'default';
 let upgrades = JSON.parse(localStorage.getItem('skibidiUpgrades')) || {};
-
+let xp = parseInt(localStorage.getItem('xp')) || 0;
+let level = parseInt(localStorage.getItem('level')) || 1;
+let xpToNext = level * 100;
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
 let coinItems = [];
@@ -67,6 +69,8 @@ function showGameOver() {
     <button onclick="goHome()">Home</button>
   `;
   document.getElementById('ui').style.display = 'flex';
+  localStorage.setItem('xp', xp);
+localStorage.setItem('level', level);
 
   if (isNewHigh) launchConfetti();
 }
@@ -78,6 +82,8 @@ function goHome() {
   document.getElementById('shop').style.display = 'none';
   document.getElementById('gameCanvas').style.display = 'block';
   document.getElementById('ui').style.display = 'flex';
+localStorage.setItem('xp', xp);
+localStorage.setItem('level', level);
 
   document.getElementById('ui').innerHTML = `
     <h1>Skibidi Jumper</h1>
@@ -105,6 +111,9 @@ function initGame() {
 
   // Always create long safe base platform at y = 600
   platforms.push({ x: 0, y: 600, w: 400, h: 10 });
+player = { x: 200, y: 500, w: 30, h: 30, vy: -10 };
+player.reached500 = false;
+player.reached1000 = false;
 
   // Now generate other platforms ABOVE it
   for (let i = 1; i < 10; i++) {
@@ -170,10 +179,12 @@ function gameLoop() {
     let dx = player.x + player.w/2 - c.x;
     let dy = player.y + player.h/2 - c.y;
     if (Math.sqrt(dx*dx + dy*dy) < c.r + 15) {
-      coins++;
-      totalCoins++;
-      coinItems.splice(i, 1);
-    }
+  coins++;
+  totalCoins++;
+  xp += 2 + Math.floor(Math.random() * 2); // 2–3 XP
+  coinItems.splice(i, 1);
+}
+
   }
 
   // Spike collision
@@ -204,9 +215,11 @@ for (let i = enemies.length - 1; i >= 0; i--) {
     if (player.vy > 0 && playerBottom - player.vy <= enemyTop + 5) {
   // Stomp kill
   stompSound.currentTime = 0;
-  stompSound.play();
-  enemies.splice(i, 1);
-  player.vy = -10; // bounce
+stompSound.play();
+enemies.splice(i, 1);
+player.vy = -10;
+xp += 2 + Math.floor(Math.random() * 2); // 2–3 XP
+
   continue;
 }
  else {
@@ -280,11 +293,40 @@ ctx.textAlign = 'left';
 ctx.textBaseline = 'top';
 ctx.fillText('Score: ' + Math.floor(score), 10, 10);
 ctx.fillText('Coins: ' + coins, 10, 35);
+let barWidth = 200;
+let filled = (xp / xpToNext) * barWidth;
+ctx.fillStyle = '#444';
+ctx.fillRect(10, 60, barWidth, 10);
+ctx.fillStyle = '#0ff';
+ctx.fillRect(10, 60, filled, 10);
+ctx.strokeStyle = '#fff';
+ctx.strokeRect(10, 60, barWidth, 10);
+ctx.fillStyle = 'white';
+ctx.font = '12px Arial';
+ctx.fillText(`XP: ${xp}/${xpToNext}`, 10, 75);
 
   if (player.y > 600) {
     showGameOver();
     return;
   }
+  if (!player.reached500 && score >= 500) {
+  xp += 20;
+  player.reached500 = true;
+}
+
+if (!player.reached1000 && score >= 1000) {
+  xp += 50;
+  player.reached1000 = true;
+}
+if (xp >= xpToNext) {
+  xp -= xpToNext;
+  level++;
+  xpToNext = level * 100;
+  localStorage.setItem('level', level);
+  localStorage.setItem('xp', xp);
+  totalCoins += 10 * level;
+  alert(`🎉 You leveled up to Level ${level}! +${10 * level} coins`);
+}
 
   requestAnimationFrame(gameLoop);
 }
