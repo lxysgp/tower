@@ -274,7 +274,12 @@ let colorMap = {
 };
 ctx.fillStyle = colorMap[playerColor] || 'white';
 ctx.fillRect(player.x, player.y, player.w, player.h);
-
+ctx.fillStyle = 'white';
+ctx.font = 'bold 18px Arial';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'top';
+ctx.fillText('Score: ' + Math.floor(score), 10, 10);
+ctx.fillText('Coins: ' + coins, 10, 35);
 
   if (player.y > 600) {
     showGameOver();
