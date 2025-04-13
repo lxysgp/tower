@@ -28,14 +28,26 @@ document.addEventListener('keyup', e => keys[e.key] = false);
 
 function startGame() {
   screen = 'game';
+
   document.getElementById('ui').style.display = 'none';
+  document.getElementById('shop').style.display = 'none'; // ✅ Hide shop
+  document.getElementById('tutorial').style.display = 'none';
+  document.getElementById('gameCanvas').style.display = 'block'; // ✅ Ensure canvas visible
+
   initGame();
   requestAnimationFrame(gameLoop);
-  bgMusic.currentTime = 0;
-bgMusic.volume = 0.5;
-bgMusic.play();
 
+  bgMusic.currentTime = 0;
+  bgMusic.volume = 0.5;
+  bgMusic.play();
+
+  // Show tutorial only once
+  if (!localStorage.getItem("seenTutorial")) {
+    document.getElementById('tutorial').style.display = 'block';
+    localStorage.setItem("seenTutorial", "true");
+  }
 }
+
 
 function showGameOver() {
   screen = 'gameOver';
@@ -63,11 +75,9 @@ function showGameOver() {
 function goHome() {
   screen = 'home';
 
-  // 🔥 Hide the shop if it’s visible
   document.getElementById('shop').style.display = 'none';
-
-  // 🔥 Show canvas again if you hid it in shop
   document.getElementById('gameCanvas').style.display = 'block';
+  document.getElementById('ui').style.display = 'flex';
 
   document.getElementById('ui').innerHTML = `
     <h1>Skibidi Jumper</h1>
@@ -79,8 +89,6 @@ function goHome() {
       Reset Highscore
     </button>
   `;
-
-  document.getElementById('ui').style.display = 'flex';
 }
 
 
