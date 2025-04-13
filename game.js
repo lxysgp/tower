@@ -204,6 +204,9 @@ if (jetpackActive) {
   jetpackTimer--;
   if (jetpackTimer <= 0) jetpackActive = false;
 }
+  if (jetpackTimer <= 0){
+    jetpackActive = false;
+  }
 
   // Scroll up
   if (player.y < 300) {
