@@ -183,7 +183,7 @@ function generatePlatform(y, safe = false) {
 
   if (!safe && Math.random() < 0.07) //enemies
     enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
-  if (!safe && Math.random() < 0.3) {
+  if (!safe && Math.random() < 0.04) {
   jetpacks.push({ x: x + 25, y: y - 30, w: 20, h: 30 });
 }
 }
@@ -237,7 +237,7 @@ for (let i = jetpacks.length - 1; i >= 0; i--) {
     jetpacks.splice(i, 1);
     player.vy = -20;          // Big boost
     jetpackActive = true;
-    jetpackTimer = 269;       // 3 seconds at 60fps
+    jetpackTimer = 669;       // 3 seconds at 60fps
     xp += 20;
   }
 }
