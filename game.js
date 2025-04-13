@@ -183,7 +183,7 @@ function generatePlatform(y, safe = false) {
 
   if (!safe && Math.random() < 0.07) //enemies
     enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
-  if (!safe && Math.random() < 0.04) {
+  if (!safe && Math.random() < 0.015) {
   jetpacks.push({ x: x + 25, y: y - 30, w: 20, h: 30 });
 }
 }
