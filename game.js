@@ -9,6 +9,9 @@ const bgMusic = document.getElementById('bgMusic');
 const gameOverSound = document.getElementById('gameOverSound');
 const stompSound = document.getElementById('stompSound');
 stompSound.volume = 1.0; // MAX volume (1.0 is max, 0.0 is mute)
+let ownedColors = JSON.parse(localStorage.getItem('ownedColors')) || ['default'];
+let playerColor = localStorage.getItem('playerColor') || 'default';
+let upgrades = JSON.parse(localStorage.getItem('skibidiUpgrades')) || {};
 
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
@@ -244,8 +247,16 @@ for (let e of enemies)
   ctx.fillRect(e.x, e.y, e.w, e.h);
 
 // Draw player
-ctx.fillStyle = 'white';
+let colorMap = {
+  default: 'white',
+  red: 'red',
+  blue: 'blue',
+  green: 'lime',
+  gold: 'gold'
+};
+ctx.fillStyle = colorMap[playerColor] || 'white';
 ctx.fillRect(player.x, player.y, player.w, player.h);
+
 
   if (player.y > 600) {
     showGameOver();
@@ -315,4 +326,54 @@ function startGame() {
     localStorage.setItem("seenTutorial", "true");
   }
 }
+function openShop() {
+  document.getElementById('ui').style.display = 'none';
+  document.getElementById('shop').style.display = 'flex';
+  document.getElementById('shopCoinCount').innerText = totalCoins;
+}
+window.openShop = openShop;
+function buyUpgrade(name, cost) {
+  if (upgrades[name]) {
+    alert("Already bought!");
+    return;
+  }
+  if (totalCoins < cost) {
+    alert("Not enough coins!");
+    return;
+  }
+  totalCoins -= cost;
+  upgrades[name] = true;
+  localStorage.setItem('skibidiUpgrades', JSON.stringify(upgrades));
+  document.getElementById('shopCoinCount').innerText = totalCoins;
+  alert(`Bought ${name} upgrade!`);
+}
+window.buyUpgrade = buyUpgrade;
+function buyColor(color, cost) {
+  if (ownedColors.includes(color)) {
+    alert(`You already own ${color}`);
+    return;
+  }
+  if (totalCoins < cost) {
+    alert("Not enough coins!");
+    return;
+  }
+  totalCoins -= cost;
+  ownedColors.push(color);
+  localStorage.setItem('ownedColors', JSON.stringify(ownedColors));
+  document.getElementById('shopCoinCount').innerText = totalCoins;
+  alert(`Unlocked ${color} skin!`);
+}
+window.buyColor = buyColor;
+
+function equipColor(color) {
+  if (!ownedColors.includes(color)) {
+    alert("You don't own this color yet!");
+    return;
+  }
+  playerColor = color;
+  localStorage.setItem('playerColor', playerColor);
+  alert(`Equipped ${color} skin!`);
+}
+window.equipColor = equipColor;
+
  
