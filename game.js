@@ -209,7 +209,7 @@ if (jetpackActive) {
   if (player.y < 300) {
     let dy = 300 - player.y;
     player.y = 300;
-    for (let arr of [platforms, coinItems, spikes, enemies]) {
+    for (let arr of [platforms, coinItems, spikes, enemies, jetpacks]) {
       for (let item of arr) item.y += dy;
     }
     score += dy;
