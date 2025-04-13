@@ -15,6 +15,8 @@ let playerColor = localStorage.getItem('playerColor') || 'default';
 let upgrades = JSON.parse(localStorage.getItem('skibidiUpgrades')) || {};
 let xp = parseInt(localStorage.getItem('xp')) || 0;
 let level = parseInt(localStorage.getItem('level')) || 1;
+let lastLevelReward = parseInt(localStorage.getItem('lastLevelReward')) || 0;
+
 let xpToNext = level * 100;
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
 let platforms = [];
@@ -331,11 +333,17 @@ if (xp >= xpToNext) {
   xp -= xpToNext;
   level++;
   xpToNext = level * 100;
+  lastLevelReward++;
+  totalCoins += lastLevelReward;
+
+  // Save progress
   localStorage.setItem('level', level);
   localStorage.setItem('xp', xp);
-  totalCoins += 10 * level;
-  alert(`🎉 You leveled up to Level ${level}! +${10 * level} coins`);
+  localStorage.setItem('lastLevelReward', lastLevelReward);
+
+  alert(`🎉 You leveled up to Level ${level}! +${lastLevelReward} coins`);
 }
+
 
   requestAnimationFrame(gameLoop);
 }
