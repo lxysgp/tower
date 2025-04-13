@@ -355,7 +355,7 @@ if (xp >= xpToNext) {
   xp -= xpToNext;
   level++;
   xpToNext = level * 100;
-  lastLevelReward++;
+  lastLevelReward+= 5;
   totalCoins += lastLevelReward;
 
   localStorage.setItem('level', level);
