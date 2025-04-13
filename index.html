@@ -11,10 +11,9 @@
   <h1>Skibidi Jumper</h1>
   <p>Total Coins: <span id="coinCount">0</span></p>
   <button onclick="startGame()">Play</button>
-  <button onclick="alert('Shop coming soon!')">Shop</button>
+  <button onclick="openShop()">Shop</button>
 </div>
 
-<!-- TUTORIAL POPUP -->
 <div id="tutorial">
   <div class="tutorial-header">
     <button onclick="hideTutorial()">X</button>
@@ -26,6 +25,31 @@
     <li>🪙 Collect coins</li>
     <li>❌ Avoid spikes!</li>
   </ul>
+</div>
+<div id="shop" style="display: none;">
+  <h2>🛒 Skibidi Shop</h2>
+  <p>Coins: <span id="shopCoinCount">0</span></p>
+
+  <h3>🚀 Upgrades</h3>
+  <button onclick="buyUpgrade('magnet', 75)">🧲 Coin Magnet (75)</button>
+  <button onclick="buyUpgrade('doubleJump', 100)">🦘 Double Jump (100)</button>
+  <button onclick="buyUpgrade('bounceBoost', 60)">🌀 Bounce Boost (60)</button>
+
+  <h3>🎨 Skins</h3>
+  <button onclick="buyColor('red', 50)">🟥 Red (50)</button>
+  <button onclick="buyColor('blue', 50)">🟦 Blue (50)</button>
+  <button onclick="buyColor('green', 50)">🟩 Green (50)</button>
+  <button onclick="buyColor('gold', 100)">🟨 Gold (100)</button>
+
+  <h3>🎮 Equip Color</h3>
+  <button onclick="equipColor('default')">⬜ Default</button>
+  <button onclick="equipColor('red')">🟥 Red</button>
+  <button onclick="equipColor('blue')">🟦 Blue</button>
+  <button onclick="equipColor('green')">🟩 Green</button>
+  <button onclick="equipColor('gold')">🟨 Gold</button>
+
+  <br><br>
+  <button onclick="goHome()">Back</button>
 </div>
 
 <audio id="bgMusic" loop>
