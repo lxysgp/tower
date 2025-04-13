@@ -71,8 +71,8 @@ function goHome() {
     Reset Highscore
   </button>
 `;
-
-  document.getElementById('ui').style.display = 'flex';
+document.getElementById('shop').style.display = 'none'; // add this line
+document.getElementById('ui').style.display = 'flex';
 }
 
 
@@ -376,3 +376,7 @@ function equipColor(color) {
 }
 window.equipColor = equipColor;
 
+window.startGame = startGame;
+window.goHome = goHome;
+window.resetHighScore = resetHighScore;
+window.hideTutorial = hideTutorial;
