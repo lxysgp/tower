@@ -15,6 +15,9 @@ let upgrades = JSON.parse(localStorage.getItem('skibidiUpgrades')) || {};
 let xp = parseInt(localStorage.getItem('xp')) || 0;
 let level = parseInt(localStorage.getItem('level')) || 1;
 let lastLevelReward = parseInt(localStorage.getItem('lastLevelReward')) || 0;
+let jetpacks = [];           // List of jetpack items on screen
+let jetpackActive = false;   // Is player invincible?
+let jetpackTimer = 0;        // How long jetpack lasts (frames)
 
 let xpToNext = level * 100;
 let player = { x: 200, y: 500, w: 30, h: 30, vy: 0 };
@@ -147,6 +150,9 @@ function initGame() {
   enemies = [];
   score = 0;
   coins = 0;
+  jetpacks = [];
+jetpackActive = false;
+jetpackTimer = 0;
 
   // Always create long safe base platform at y = 600
   platforms.push({ x: 0, y: 600, w: 400, h: 10 });
@@ -178,7 +184,10 @@ function generatePlatform(y, safe = false) {
   if (!safe && Math.random() < 0.07) //enemies
     enemies.push({ x: x, y: y - 30, w: 30, h: 30, dir: 1 });
 }
-
+if (!safe && Math.random() < 0.03) {
+  jetpacks.push({ x: x + 25, y: y - 30, w: 20, h: 30 });
+}
+f
 function gameLoop() {
   if (screen !== 'game') return;
   ctx.clearRect(0, 0, 400, 600);
@@ -190,6 +199,10 @@ function gameLoop() {
   if (keys['ArrowRight']) player.x += 5;
   if (player.x < 0) player.x = 0;
   if (player.x + player.w > 400) player.x = 370;
+if (jetpackActive) {
+  jetpackTimer--;
+  if (jetpackTimer <= 0) jetpackActive = false;
+}
 
   // Scroll up
   if (player.y < 300) {
@@ -200,7 +213,7 @@ function gameLoop() {
     }
     score += dy;
   }
-
+  
   // Platform collision
   for (let p of platforms) {
     if (player.vy > 0 &&
@@ -211,6 +224,21 @@ function gameLoop() {
       player.vy = -10;
     }
   }
+  //jetpack
+for (let i = jetpacks.length - 1; i >= 0; i--) {
+  let j = jetpacks[i];
+  if (
+    player.x < j.x + j.w &&
+    player.x + player.w > j.x &&
+    player.y < j.y + j.h &&
+    player.y + player.h > j.y
+  ) {
+    jetpacks.splice(i, 1);
+    player.vy = -20;          // Big boost
+    jetpackActive = true;
+    jetpackTimer = 180;       // 3 seconds at 60fps
+  }
+}
 
   // Coin collision
   for (let i = coinItems.length - 1; i >= 0; i--) {
@@ -255,10 +283,12 @@ for (let i = enemies.length - 1; i >= 0; i--) {
   if (e.x < 0 || e.x + e.w > 400) e.dir *= -1;
 
   // Check collision
-  if (player.x < e.x + e.w &&
-      player.x + player.w > e.x &&
-      player.y < e.y + e.h &&
-      player.y + player.h > e.y) {
+  if (!jetpackActive &&
+    player.x < e.x + e.w &&
+    player.x + player.w > e.x &&
+    player.y < e.y + e.h &&
+    player.y + player.h > e.y)
+ {
     
     let playerBottom = player.y + player.h;
     let enemyTop = e.y;
@@ -292,6 +322,10 @@ xp += 2 + Math.floor(Math.random() * 2); // 2–3 XP
   coinItems = coinItems.filter(c => c.y < 600);
   spikes = spikes.filter(s => s.y < 600);
   enemies = enemies.filter(e => e.y < 600);
+//jetpack
+  ctx.fillStyle = 'orange';
+for (let j of jetpacks)
+  ctx.fillRect(j.x, j.y, j.w, j.h);
 
   // Draw coins (under everything)
 ctx.fillStyle = 'gold';
