@@ -237,7 +237,8 @@ for (let i = jetpacks.length - 1; i >= 0; i--) {
     jetpacks.splice(i, 1);
     player.vy = -20;          // Big boost
     jetpackActive = true;
-    jetpackTimer = 180;       // 3 seconds at 60fps
+    jetpackTimer = 269;       // 3 seconds at 60fps
+    xp += 20;
   }
 }
 
