@@ -331,7 +331,7 @@ xp += 2 + Math.floor(Math.random() * 2); // 2–3 XP
 ctx.fillStyle = 'orange';
 ctx.font = '16px Arial';
 for (let j of jetpacks) {
-  ctx.fillText("🔥", j.x, j.y);
+  ctx.fillText("🔷", j.x, j.y);
 }
 
 
