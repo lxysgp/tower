@@ -89,12 +89,21 @@ localStorage.setItem('level', level);
     <h1>Skibidi Jumper</h1>
     <p>Total Coins: <span id="coinCount">${totalCoins}</span></p>
     <p style="color: gold; text-shadow: 0 0 8px gold;">🏆 High Score: ${Math.floor(highScore)}</p>
+    <div id="xpBarHome"></div>
     <button onclick="startGame()">Play</button>
     <button onclick="openShop()">Shop</button>
     <button onclick="resetHighScore()" style="background: #f00; color: white; box-shadow: 0 0 15px red;">
       Reset Highscore
     </button>
   `;
+  const xpPercent = Math.floor((xp / xpToNext) * 100);
+document.getElementById('xpBarHome').innerHTML = `
+  <p style="margin-bottom: 4px; color: white;">Level ${level} – XP: ${xp} / ${xpToNext}</p>
+  <div style="width: 200px; height: 10px; background: #444; border: 1px solid #fff; margin: auto;">
+    <div style="width: ${xpPercent}%; height: 100%; background: #0ff;"></div>
+  </div>
+`;
+
 }
 
 
